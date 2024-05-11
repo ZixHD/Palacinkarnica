@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Detalji kategorije</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="main.css">
+</head>
+
+<body>
+    <main class="container">
+        <div class="row">
+            <nav class="navbar navbar-expand-sm bg-light navbar-light">
+                <div class="container-fluid">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link Dashboard" href="kategorije.html">Kategorije</a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+        <h1>Detalji kategorije</h1>
+        <form method="post" id="forma" action="http://postman-echo.com/post">
+            <div id="kategorijaDetails"></div>
+        </form>
+        <button id="deleteButton" class="btn btn-danger">Delete</button>
+    </main>
+
+    <script>
+        window.addEventListener("load", function () {
+
+            var url = new URL(window.location.href);
+            id = url.searchParams.get("id");
+
+               const cookies = document.cookie.split('=');
+            console.log(cookies);
+            const token = cookies[cookies.length - 1];
+            fetch('http://localhost:9000/kategorija/' + id, {
+                 headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+                .then(resp => resp.json())
+                .then(data => {
+                    document.getElementById("kategorijaDetails").innerHTML = `
+                            <dl class="row">
+                                <dt class="col-sm-3">Naziv</dt>
+                                <dd class="col-sm-9">${(data.naziv)}</dd>
+                            </dl>
+                          `;
+                })
+                .catch(error => {
+                    console.error('Error: ', error);
+                });
+
+        });
+
+        function deleteSastojak(id) {
+              const cookies = document.cookie.split('=');
+            console.log(cookies);
+            const token = cookies[cookies.length - 1];
+            fetch(`http://localhost:9000/kategorija/` + id, {
+                method: 'DELETE',
+                 headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Delete Success:', data);
+                    window.location.href = "kategorije.html";
+                })
+                .catch(error => {
+                    console.error('Delete Error:', error);
+                });
+        }
+
+        document.getElementById("deleteButton").addEventListener("click", function () {
+            // Confirm before deletion (optional)
+            if (confirm("Are you sure you want to delete this sastojak?")) {
+                // Call the deleteSastojak function
+                deleteSastojak(id);
+            }
+        });
+    </script>
+</body>
+
+</html>

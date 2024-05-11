@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Nova kategorija</title>
+    <base href="http://localhost:8000/admin/">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="main.css">
+</head>
+
+<body>
+    <main class="container">
+        <h1>Napravite novu kategoriju</h1>
+        <div class="row">
+            <nav class="navbar navbar-expand-sm bg-light navbar-light">
+                <div class="container-fluid">
+                    <ul>
+                        <li>
+                            <form id="createKategorijaForm">
+                                <label for="kategorijaName">Ime kategorije:</label>
+                                <input type="text" id="kategorijaName" name="kategorijaName">
+                                <button type="button" onclick="createSastojak()">Dodaj</button>
+                            </form>
+                            
+                        </li>
+                        
+                    </ul>
+                    <a href="kategorije.html" class="btn btn-link">Nazad</a>
+                </div>
+            </nav>
+           
+        </div>
+    </main>
+    <script>
+        function createSastojak() {
+            
+            var kategorijaName = document.getElementById("kategorijaName").value;
+
+            if (kategorijaName.length < 2) {
+                alert("Naziv kategorije ne moze biti kraci od 3 slova");
+                return;
+            }
+            const cookies = document.cookie.split('=');
+            console.log(cookies);
+            const token = cookies[cookies.length - 1];
+
+            fetch("http://localhost:9000/kategorija", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json', // Set the content type to JSON
+                     'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ naziv: kategorijaName })
+            }).then(response => {
+                if (!response.ok) {
+                    return response.json(); // Return the promise
+                }
+                return response.json().then(data => {
+                    console.log('Success:', data);
+                    window.location.href = "./kategorije.html";
+                });
+            })
+                .then(data => {
+                    if (data) {
+                        alert(JSON.stringify(data)); // Show the alert with the JSON response
+                    } else {
+                        console.log('Success:', data);
+                        window.location.href = "./kategorije.html";
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+    </script>
+</body>
+
+</html>
